@@ -3,18 +3,12 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "Marker.h"
+#include "marker.h"
 #include "GraphUtils.h"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <time.h>
 //#include <Gdiplus.h>
-#ifdef WIN32
-#include <Windows.h>
-#else
-#include <sys\timeb.h>
-#include <ctime>
-#endif
 
 //using namespace cv;
 using namespace std;
@@ -56,12 +50,12 @@ void createTrackbars(){
 	cv::namedWindow(trackbarWindowName, 0);
 	//create memory to store trackbar name on window
 	char TrackbarName[50];
-	sprintf_s(TrackbarName, "H_MIN", H_MIN);
-	sprintf_s(TrackbarName, "H_MAX", H_MAX);
-	sprintf_s(TrackbarName, "S_MIN", S_MIN);
-	sprintf_s(TrackbarName, "S_MAX", S_MAX);
-	sprintf_s(TrackbarName, "V_MIN", V_MIN);
-	sprintf_s(TrackbarName, "V_MAX", V_MAX);
+	sprintf(TrackbarName, "H_MIN", H_MIN);
+	sprintf(TrackbarName, "H_MAX", H_MAX);
+	sprintf(TrackbarName, "S_MIN", S_MIN);
+	sprintf(TrackbarName, "S_MAX", S_MAX);
+	sprintf(TrackbarName, "V_MIN", V_MIN);
+	sprintf(TrackbarName, "V_MAX", V_MAX);
 	//create trackbars and insert them into window
 	//3 parameters are: the address of the variable that is changing when the trackbar is moved(eg.H_LOW),
 	//the max value the trackbar can move (eg. H_HIGH), 
@@ -154,9 +148,15 @@ int main(int argc, char* argv[]){
 	}
 	//video capture object to acquire webcam feed	
 	//open capture object at location zero (default location for webcam)
-	cv::VideoCapture cap("E:\\test_01.avi");
-
-	// if not success, exit program
+//        if (argc<2)
+//	{
+  // 		cv::VideoCapture cap(0);
+//	}
+  //      else
+//	{
+        	cv::VideoCapture cap("test_01.avi");
+//	}
+        // if not success, exit program
 	if (!cap.isOpened()){
 		cout << "Cannot open the video file" << endl;
 		return -1;
@@ -180,6 +180,11 @@ int main(int argc, char* argv[]){
 	while (1){
 		//store image to matrix
 		cap.read(cameraFeed);
+		if (cameraFeed.empty())
+		{
+			cout<<"End of stream"<<endl;
+			break;
+		}
 		//convert frame from BGR to HSV colorspace
 		cvtColor(cameraFeed, HSV, cv::COLOR_BGR2HSV);
 		Marker yellow("yellow");
